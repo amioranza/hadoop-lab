@@ -4,12 +4,14 @@ HDP_VERSION="3.2.0"
 HDP_HOME="/opt/hadoop-${HDP_VERSION}"
 
 echo "### Installing Hadoop pre-reqs ###"
-sudo apt-get update && apt-get upgrade -y
+apt-get update && apt-get upgrade -y
 sudo apt-get install -y openjdk-8-jdk ssh rsync
 
 echo "### Creating users and groups ###"
 sudo addgroup hadoop
 sudo adduser --system --quiet --ingroup hadoop hduser
+ssh-keygen -t rsa -f ${HOME}/.ssh/id_rsa -P ""
+cat ${HOME}/.ssh/id_rsa.pub >> ${HOME}/.ssh/authorized_keys
 
 echo "### Extracting Hadoop ###"
 sudo cp -v /vagrant/hadoop-${HDP_VERSION}.tar.gz /opt
@@ -29,5 +31,5 @@ bin/hdfs namenode -format
 
 echo "# Starting server (DFS,YARN)"
 cd ${HDP_HOME}
-sbin/start-dfs.sh
-sbin/start-yarn.sh
+nohup sbin/start-dfs.sh
+nohup sbin/start-yarn.sh
